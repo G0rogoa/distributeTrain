@@ -18,6 +18,10 @@ if ! command -v nvcc >/dev/null && [[ ! -x "${CUDA_HOME:-/usr/local/cuda}/bin/nv
   echo "nvcc is required; PyTorch's CUDA runtime alone cannot build nccl-tests" >&2
   exit 2
 fi
+if command -v nvcc >/dev/null; then
+  nvcc_path="$(command -v nvcc)"
+  export CUDA_HOME="$(dirname "$(dirname "$nvcc_path")")"
+fi
 make -C "$root" -j"$(nproc)" MPI=0
 if [[ -d "$root/.git" ]]; then
   git -C "$root" rev-parse HEAD > "$root/build/source-commit.txt"
