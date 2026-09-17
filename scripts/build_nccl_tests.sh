@@ -22,6 +22,12 @@ if command -v nvcc >/dev/null; then
   nvcc_path="$(command -v nvcc)"
   export CUDA_HOME="$(dirname "$(dirname "$nvcc_path")")"
 fi
+if [[ -n "${CONDA_PREFIX:-}" && -z "${NCCL_HOME:-}" ]]; then
+  nccl_headers=("$CONDA_PREFIX"/lib/python*/site-packages/nvidia/nccl/include/nccl.h)
+  if [[ -f "${nccl_headers[0]}" ]]; then
+    export NCCL_HOME="$(dirname "$(dirname "${nccl_headers[0]}")")"
+  fi
+fi
 make -C "$root" -j"$(nproc)" MPI=0
 if [[ -d "$root/.git" ]]; then
   git -C "$root" rev-parse HEAD > "$root/build/source-commit.txt"
