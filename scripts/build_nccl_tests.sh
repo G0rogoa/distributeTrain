@@ -28,6 +28,13 @@ if [[ -n "${CONDA_PREFIX:-}" && -z "${NCCL_HOME:-}" ]]; then
     export NCCL_HOME="$(dirname "$(dirname "${nccl_headers[0]}")")"
   fi
 fi
+if [[ -n "${NCCL_HOME:-}" && ! -e "$NCCL_HOME/lib/libnccl.so" && -e "$NCCL_HOME/lib/libnccl.so.2" ]]; then
+  nccl_prefix="$root/.nccl-prefix"
+  mkdir -p "$nccl_prefix/include" "$nccl_prefix/lib"
+  ln -sfn "$NCCL_HOME/include/nccl.h" "$nccl_prefix/include/nccl.h"
+  ln -sfn "$NCCL_HOME/lib/libnccl.so.2" "$nccl_prefix/lib/libnccl.so"
+  export NCCL_HOME="$nccl_prefix"
+fi
 make -C "$root" -j"$(nproc)" MPI=0
 if [[ -d "$root/.git" ]]; then
   git -C "$root" rev-parse HEAD > "$root/build/source-commit.txt"
