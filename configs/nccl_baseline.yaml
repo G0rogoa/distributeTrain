@@ -1,0 +1,14 @@
+binary: third_party/nccl-tests/build/all_reduce_perf
+gpu_sets:
+  - [1, 2]
+  - [2, 3]
+  - [1, 2, 3]
+types: [float, bfloat16]
+min_bytes: 1K
+max_bytes: 256M
+preflight_max_bytes: 1M
+step_factor: 2
+warmup_iterations: 20
+iterations: 100
+repeats: 3
+timeout_seconds: 900

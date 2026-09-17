@@ -1,0 +1,18 @@
+model_config: configs/model_baseline.yaml
+mode: benchmark
+sequence_lengths: [512, 2048]
+micro_batch_sizes: [1]
+warmup_steps: 20
+measurement_steps: 100
+repeats: 3
+seed: 20260917
+learning_rate: 0.0003
+betas: [0.9, 0.95]
+eps: 0.00000001
+weight_decay: 0.1
+gradient_accumulation: 1
+precision: bf16_autocast
+attention_backend: sdpa
+activation_checkpointing: false
+torch_compile: false
+allow_tf32: true

@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "train-perf"
+version = "0.1.0"
+description = "Reproducible NCCL and single-GPU Transformer baselines"
+requires-python = ">=3.10"
+dependencies = [
+  "PyYAML>=6.0,<7",
+  "transformers==4.55.4",
+]
+
+[project.optional-dependencies]
+report = ["matplotlib>=3.8,<4"]
+test = ["pytest>=8,<9"]
+
+[project.scripts]
+collect-env = "train_perf.collect_env:main"
+run-nccl-bench = "train_perf.nccl:main"
+run-train-bench = "train_perf.train:main"
+summarize-results = "train_perf.summarize:main"
+profile-train = "train_perf.profile:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
