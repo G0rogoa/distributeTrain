@@ -23,7 +23,7 @@ if command -v nvcc >/dev/null; then
   export CUDA_HOME="$(dirname "$(dirname "$nvcc_path")")"
 fi
 if [[ -n "${CONDA_PREFIX:-}" && -z "${NCCL_HOME:-}" ]]; then
-  nccl_package="$(python -c 'import pathlib, nvidia.nccl; print(pathlib.Path(nvidia.nccl.__file__).parent)' 2>/dev/null || true)"
+  nccl_package="$(python -c 'import pathlib, sysconfig; print(pathlib.Path(sysconfig.get_paths()["purelib"]) / "nvidia" / "nccl")' 2>/dev/null || true)"
   if [[ -f "$nccl_package/include/nccl.h" ]]; then
     export NCCL_HOME="$nccl_package"
   fi
