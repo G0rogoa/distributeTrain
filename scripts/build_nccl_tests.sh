@@ -35,6 +35,7 @@ if [[ -n "${NCCL_HOME:-}" && ! -e "$NCCL_HOME/lib/libnccl.so" && -e "$NCCL_HOME/
   mkdir -p "$nccl_prefix/include" "$nccl_prefix/lib"
   ln -sfn "$NCCL_HOME/include/nccl.h" "$nccl_prefix/include/nccl.h"
   ln -sfn "$NCCL_HOME/lib/libnccl.so.2" "$nccl_prefix/lib/libnccl.so"
+  ln -sfn "$NCCL_HOME/lib/libnccl.so.2" "$nccl_prefix/lib/libnccl.so.2"
   export NCCL_HOME="$nccl_prefix"
 fi
 make -C "$root" -j"$(nproc)" MPI=0

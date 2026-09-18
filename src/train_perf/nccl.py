@@ -114,6 +114,10 @@ def execute(config_path: str, results_dir: str, *, preflight_only: bool = False)
                 record.write_log("binary-help.log", help_output)
                 env = os.environ.copy()
                 env["CUDA_VISIBLE_DEVICES"] = ",".join(map(str, indices))
+                nccl_lib = binary.parent.parent / ".nccl-prefix" / "lib"
+                if nccl_lib.is_dir():
+                    existing = env.get("LD_LIBRARY_PATH", "")
+                    env["LD_LIBRARY_PATH"] = f"{nccl_lib.resolve()}:{existing}" if existing else str(nccl_lib.resolve())
                 result = None
                 try:
                     result = subprocess.run(command, env=env, text=True, capture_output=True, check=False,
