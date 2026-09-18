@@ -1,4 +1,5 @@
 import unittest
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -25,6 +26,20 @@ class SchemaTest(unittest.TestCase):
                 '{"status":"failed","experiment_type":"single_gpu_train","config":{}}', encoding="utf-8")
             rows = summarize(directory, str(Path(directory) / "summary.csv"))
             self.assertEqual(rows, [])
+
+    def test_training_model_mapping_is_groupable(self):
+        with TemporaryDirectory() as directory:
+            run = Path(directory) / "success"
+            run.mkdir()
+            manifest = {
+                "status": "success", "experiment_type": "single_gpu_train",
+                "config": {"model_config": {"hidden_size": 16}, "sequence_length": 8,
+                           "micro_batch_size": 1, "precision": "bf16_autocast", "gpu_uuid": "GPU-x"},
+            }
+            (run / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            (run / "metrics.jsonl").write_text('{"input_tokens_per_s": 10}\n', encoding="utf-8")
+            rows = summarize(directory, str(Path(directory) / "summary.csv"))
+            self.assertEqual(rows[0]["median"], 10.0)
 
 
 if __name__ == "__main__":

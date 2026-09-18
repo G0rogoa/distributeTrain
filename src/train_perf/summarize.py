@@ -22,7 +22,8 @@ def summarize(results_dir: str, output: str) -> list[dict[str, Any]]:
             metric = json.loads(line)
             cfg = manifest["config"]
             if manifest["experiment_type"] == "single_gpu_train":
-                key = ("train", cfg["model_config"], cfg["sequence_length"], cfg["micro_batch_size"],
+                model_key = json.dumps(cfg["model_config"], sort_keys=True, separators=(",", ":"))
+                key = ("train", model_key, cfg["sequence_length"], cfg["micro_batch_size"],
                        cfg["precision"], cfg["gpu_uuid"])
                 groups[key].append(metric)
             else:
