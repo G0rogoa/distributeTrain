@@ -15,6 +15,8 @@ def summarize(results_dir: str, output: str) -> list[dict[str, Any]]:
         manifest = json.loads(path.read_text(encoding="utf-8"))
         if manifest["status"] != "success" or manifest["experiment_type"] not in {"single_gpu_train", "nccl_all_reduce"}:
             continue
+        if manifest["experiment_type"] == "nccl_all_reduce" and manifest["config"].get("preflight", False):
+            continue
         metrics_path = path.parent / "metrics.jsonl"
         if not metrics_path.exists():
             continue

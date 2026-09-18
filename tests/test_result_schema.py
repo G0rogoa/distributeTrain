@@ -41,6 +41,17 @@ class SchemaTest(unittest.TestCase):
             rows = summarize(directory, str(Path(directory) / "summary.csv"))
             self.assertEqual(rows[0]["median"], 10.0)
 
+    def test_nccl_preflight_is_not_summarized(self):
+        with TemporaryDirectory() as directory:
+            run = Path(directory) / "preflight"
+            run.mkdir()
+            manifest = {"status": "success", "experiment_type": "nccl_all_reduce",
+                        "config": {"preflight": True}}
+            (run / "manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+            (run / "metrics.jsonl").write_text('{"busbw_gbps": 1}\n', encoding="utf-8")
+            rows = summarize(directory, str(Path(directory) / "summary.csv"))
+            self.assertEqual(rows, [])
+
 
 if __name__ == "__main__":
     unittest.main()
