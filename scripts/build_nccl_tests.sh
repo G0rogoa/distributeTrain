@@ -11,7 +11,9 @@ if [[ ! -d "$root/.git" ]]; then
   fi
 fi
 if [[ -d "$root/.git" ]]; then
-  git -C "$root" fetch --tags --force
+  if ! git -C "$root" rev-parse --verify --quiet "$version^{commit}" >/dev/null; then
+    git -C "$root" fetch --tags --force
+  fi
   git -C "$root" checkout --detach "$version"
 fi
 if ! command -v nvcc >/dev/null && [[ ! -x "${CUDA_HOME:-/usr/local/cuda}/bin/nvcc" ]]; then
